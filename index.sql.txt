@@ -1,0 +1,90 @@
+-- 1. إنشاء قاعدة البيانات
+CREATE DATABASE SchoolSaverDB;
+GO
+
+USE SchoolSaverDB;
+GO
+
+-- 2. جدول الحافلات (Buses)
+CREATE TABLE Buses (
+    BusID INT IDENTITY(1,1) PRIMARY KEY,
+    BusNumber VARCHAR(20) NOT NULL UNIQUE,
+    DriverName NVARCHAR(100) NOT NULL,
+    DriverPhone VARCHAR(20),
+    Capacity INT DEFAULT 30,
+    CurrentLat DECIMAL(9,6),
+    CurrentLng DECIMAL(9,6),
+    Status NVARCHAR(50) DEFAULT N'في الطريق'
+);
+
+-- 3. جدول المحطات وخطوط السير (Routes & Stations)
+CREATE TABLE Stations (
+    StationID INT IDENTITY(1,1) PRIMARY KEY,
+    StationName NVARCHAR(100) NOT NULL,
+    PickupTime TIME NOT NULL
+);
+
+-- 4. جدول الطلاب (Students)
+CREATE TABLE Students (
+    StudentID INT IDENTITY(1,1) PRIMARY KEY,
+    FullName NVARCHAR(100) NOT NULL,
+    Grade NVARCHAR(50),
+    ParentPhone VARCHAR(20) NOT NULL,
+    BusID INT FOREIGN KEY REFERENCES Buses(BusID),
+    StationID INT FOREIGN KEY REFERENCES Stations(StationID)
+);
+
+-- 5. جدول سجل الصعود اليومي (Daily Boarding Log)
+CREATE TABLE BoardingLog (
+    LogID INT IDENTITY(1,1) PRIMARY KEY,
+    StudentID INT FOREIGN KEY REFERENCES Students(StudentID),
+    BusID INT FOREIGN KEY REFERENCES Buses(BusID),
+    BoardingTime DATETIME DEFAULT GETDATE(),
+    IsBoarded BIT DEFAULT 0 -- 1 = صعد، 0 = لم يصعد
+);
+
+-- 6. جدول التنبيهات والطوارئ (SOS Alerts)
+CREATE TABLE EmergencyAlerts (
+    AlertID INT IDENTITY(1,1) PRIMARY KEY,
+    BusID INT FOREIGN KEY REFERENCES Buses(BusID),
+    AlertType NVARCHAR(100) DEFAULT N'SOS Emergency',
+    AlertTime DATETIME DEFAULT GETDATE(),
+    IsResolved BIT DEFAULT 0
+);
+GO
+
+-- =============================================
+-- إضافة بيانات تجريبية (Sample Data)
+-- =============================================
+
+INSERT INTO Buses (BusNumber, DriverName, DriverPhone, CurrentLat, CurrentLng)
+VALUES ('Bus-102', N'محمود حسن', '01012345678', 30.044412, 31.235712);
+
+INSERT INTO Stations (StationName, PickupTime)
+VALUES (N'محطة المعادي', '07:15:00'),
+       (N'محطة دجلة', '07:30:00');
+
+INSERT INTO Students (FullName, Grade, ParentPhone, BusID, StationID)
+VALUES (N'عمر أحمد', N'الأول الثانوي', '01111111111', 1, 1),
+       (N'ليلى حسن', N'الثاني الإعدادي', '01222222222', 1, 2);
+
+-- تسجيل صعود طالب
+INSERT INTO BoardingLog (StudentID, BusID, IsBoarded) 
+VALUES (1, 1, 1);
+GO
+
+-- =============================================
+-- استعلام لطلب قائمة الطلاب وحالة صعودهم (Query)
+-- =============================================
+SELECT 
+    s.FullName AS [اسم الطالب],
+    b.BusNumber AS [رقم الحافلة],
+    st.StationName AS [المحطة],
+    CASE 
+        WHEN bl.IsBoarded = 1 THEN N'تم الصعود ✓'
+        ELSE N'لم يصعد بعد ❌'
+    END AS [حالة الصعود]
+FROM Students s
+LEFT JOIN Buses b ON s.BusID = b.BusID
+LEFT JOIN Stations st ON s.StationID = st.StationID
+LEFT JOIN BoardingLog bl ON s.StudentID = bl.StudentID AND CAST(bl.BoardingTime AS DATE) = CAST(GETDATE() AS DATE);
