@@ -1,2 +1,23 @@
-# school-saver
-A real-time School Bus Tracking and Student Safety web app with SQL Server database integration.
+# 🛡️ School Saver & Bus Tracker System
+
+تطبيق ويب متكامل لـ **أمان الطلاب وتتبع حافلات المدارس مباشرة (Live GPS Map)**، مع إدارة كاملة للبيانات عبر قواعد بيانات علائقية.
+
+## 🌟 الميزات الرئيسية (Features)
+- 📍 **تتبع حي مباشر (Live Map Tracking):** عرض موقع الحافلة والسرعة لحظة بلحظة باستخدام Leaflet OpenStreetMap.
+- 🚌 **سجل صعود الطلاب (Boarding Tracker):** متابعة حضور وصعود كل طالب عند المحطة وتحديث حالته.
+- 🗄️ **قواعد بيانات خلفية قوية (SQL Server Backend):** هيكلة قاعدة بيانات متكاملة لإدارة الجداول (الطلاب، الحافلات، المحطات، وسجل الصعود).
+- 🚨 **نظام الطوارئ (SOS Emergency System):** إرسال تنبيهات فورية لإدارة المدرسة وأولياء الأمور.
+- 📱 **تصميم متجاوب بالكامل (Responsive Layout):** يضمن تجربة مستخدم سلسة على الهواتف والأجهزة الذكية.
+
+## 🛠️ التقنيات المستخدمة (Tech Stack)
+- **Frontend:** HTML5, CSS3 (Flexbox & Grid), JavaScript (ES6)
+- **Mapping & APIs:** Leaflet.js & OpenStreetMap
+- **Database & Backend:** Microsoft SQL Server (T-SQL) - تصميم الجداول والعلاقات (Foreign Keys & Joins)
+
+## 🗄️ هيكل قاعدة البيانات (Database Schema Overview)
+يعتمد النظام على عدة جداول مرتبطة بعلاقات دقيقة (`Foreign Keys`) لضمان تكامل البيانات:
+1. **Buses:** إدارة الحافلات، السائقين، والإحداثيات الحية.
+2. **Stations:** محطات خطوط السير وأوقات الوصول.
+3. **Students:** بيانات الطلاب وربطهم بالحافلات والمحطات.
+4. **BoardingLog:** سجل تتبع الصعود اليومي.
+5. **EmergencyAlerts:** إدارة وتتبع بلاغات الطوارئ.
